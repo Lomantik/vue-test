@@ -1,9 +1,9 @@
-name: Deploy to GitHub Pages
+name: Build and Deploy to GitHub Pages
 run-name: ${{ github.actor }} is learning GitHub Actions
 
 on:
   workflow_run:
-    workflows: [ "CI and Build" ]
+    workflows: [ "CI" ]
     types: [ completed ]
 
 permissions:
@@ -16,7 +16,34 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build -- --mode github-pages
+
+      - name: Pages fallback hack
+        run: cp dist/index.html dist/404.html
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
   deploy:
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Download build artifact

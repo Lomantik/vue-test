@@ -1,4 +1,4 @@
-name: CI and Build
+name: CI
 run-name: ${{ github.actor }} is learning GitHub Actions
 
 on: [ push, pull_request ]
@@ -30,31 +30,3 @@ jobs:
 
 #      - name: e2e tests
 #        run: npm run test:e2e
-
-  build:
-    needs: ci
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v5
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build
-        run: npm run build -- --mode github-pages
-
-      - name: Pages fallback hack
-        run: cp dist/index.html dist/404.html
-
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist
-          path: dist/
