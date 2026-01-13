@@ -41,7 +41,7 @@ jobs:
 #        run: npm run test:e2e
 
       - name: Build
-        run: npm run build
+        run: npm run build -- --mode github-pages
 
       - name: Pages fallback hack
         run: cp dist/index.html dist/404.html
