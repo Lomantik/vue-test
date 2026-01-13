@@ -1,4 +1,4 @@
-name: CI
+name: CI and Deploy
 run-name: ${{ github.actor }} is learning GitHub Actions
 
 on: [push, pull_request]
@@ -13,7 +13,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  ci-deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -42,7 +42,10 @@ jobs:
 
       - name: Build
         run: npm run build -- --mode github-pages
-
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
       - name: Pages fallback hack
         run: cp dist/index.html dist/404.html
 
